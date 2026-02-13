@@ -39,44 +39,58 @@
         }
         .status-card {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 15px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             margin-bottom: 20px;
+            border: 1px solid #eee;
         }
         .status-badge {
             display: inline-block;
-            padding: 10px 30px;
-            border-radius: 25px;
+            padding: 12px 35px;
+            border-radius: 30px;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-top: 10px;
+            transition: all 0.3s ease;
         }
         .salik { background-color: #d4edda; color: var(--success-color); border: 2px solid var(--success-color); }
+        .crowded { background-color: #f8d7da; color: var(--danger-color); border: 2px solid var(--danger-color); }
+        
         .spiritual-msg {
             background: linear-gradient(135deg, #1a5f7a, #0d2f3d);
             color: white;
-            padding: 15px;
+            padding: 18px;
             border-radius: 15px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             line-height: 1.6;
             margin-bottom: 20px;
-            border-right: 5px solid var(--accent-color);
+            border-right: 6px solid var(--accent-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         .main-button {
             background-color: var(--accent-color);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1.1rem;
+            padding: 18px 30px;
+            border-radius: 12px;
+            font-size: 1.2rem;
             font-weight: bold;
             width: 100%;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(201, 162, 39, 0.3);
+            box-shadow: 0 5px 15px rgba(201, 162, 39, 0.4);
+            transition: background 0.3s;
         }
-        .footer { padding: 20px; font-size: 0.8rem; color: #888; text-align: center; }
+        .main-button:hover { background-color: #b08d20; }
+        
+        #coords {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 10px;
+            display: none;
+        }
+        .footer { padding: 25px; font-size: 0.85rem; color: #777; text-align: center; width: 100%; }
     </style>
 </head>
 <body>
@@ -84,21 +98,85 @@
         <h1>مَسْلَك</h1>
         <p>دليلك الذكي للطواف</p>
     </div>
+
     <div class="container">
         <div class="spiritual-msg">
-            <strong>تذكير:</strong> أنت في أقدس مكان على وجه الأرض، استغل كل لحظة بالذكر والخلق الحسن، فالحسنة هنا مضاعفة.
+            <strong>تذكير إيماني:</strong> أنت الآن في أقدس مكان على وجه الأرض. استغل كل لحظة بالذكر والخلق الحسن، فالحسنة هنا مضاعفة والرفق بإخوانك عبادة.
         </div>
+
         <div class="status-card">
-            <h3>حالة مسار الطواف الآن</h3>
+            <h3 id="status-title">حالة المسار الحالي</h3>
             <div id="statusBadge" class="status-badge salik">المسار سـالـك</div>
-            <p id="suggestion" style="margin-top: 15px;">يمكنك البدء بطوافك الآن بكل يسر.</p>
+            <p id="suggestion" style="margin-top: 15px; font-weight: 500;">اضغط بالأسفل لتفعيل الإرشاد الذكي</p>
+            <div id="coords">جاري جلب الإحداثيات...</div>
         </div>
-        <button class="main-button" onclick="startTawaf()">تفعيل تتبع المسار (GPS)</button>
+
+        <button id="gpsBtn" class="main-button" onclick="startTawaf()">تفعيل الإرشاد الذكي (GPS)</button>
     </div>
-    <div class="footer">مشروع مسلك &copy; لخدمة ضيوف الرحمن</div>
+
+    <div class="footer">
+        مشروع مَسْلَك &copy; لخدمة ضيوف الرحمن
+    </div>
+
     <script>
+        let watchId = null;
+
         function startTawaf() {
-            alert("سيتم طلب الإذن للوصول للموقع لتوجيهك للمسار السالك...");
+            const btn = document.getElementById('gpsBtn');
+            const suggestion = document.getElementById('suggestion');
+            const coordsDiv = document.getElementById('coords');
+
+            if ("geolocation" in navigator) {
+                suggestion.innerText = "جاري الاتصال بالأقمار الصناعية...";
+                
+                // تتبع الموقع في الوقت الفعلي بدقة عالية
+                watchId = navigator.geolocation.watchPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const speed = position.coords.speed || 0; // السرعة بالمتر في الثانية
+
+                    coordsDiv.style.display = "block";
+                    coordsDiv.innerText = `الموقع: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+                    
+                    btn.innerText = "التتبع نشط الآن ✅";
+                    btn.style.backgroundColor = "#1a5f7a";
+
+                    // خوارزمية ذكاء الحشود: إذا كانت السرعة أقل من 0.4 م/ث (حوالي 1.5 كم/س) نعتبره زحاماً
+                    if (speed > 0 && speed < 0.4) {
+                        updateStatus(false);
+                    } else {
+                        updateStatus(true);
+                    }
+
+                }, function(error) {
+                    alert("فضلاً قم بتفعيل الموقع (GPS) في هاتفك والسماح للمتصفح بالوصول إليه ليعمل نظام مسلك.");
+                    suggestion.innerText = "فشل الوصول للموقع";
+                }, {
+                    enableHighAccuracy: true,
+                    maximumAge: 0,
+                    timeout: 10000
+                });
+            } else {
+                alert("عذراً، هاتفك لا يدعم تقنية تحديد المواقع المطلوبة.");
+            }
+        }
+
+        function updateStatus(isSalik) {
+            const badge = document.getElementById('statusBadge');
+            const suggestion = document.getElementById('suggestion');
+            const cardTitle = document.getElementById('status-title');
+
+            if(isSalik) {
+                badge.innerText = "المسار سـالـك";
+                badge.className = "status-badge salik";
+                suggestion.innerText = "حركتك انسيابية، يمكنك المتابعة بكل يسر.";
+                suggestion.style.color = "#28a745";
+            } else {
+                badge.innerText = "المسار مزدحم";
+                badge.className = "status-badge crowded";
+                suggestion.innerText = "تنبيه: حركة الزحام بطيئة جداً في موقعك الحالي.";
+                suggestion.style.color = "#dc3545";
+            }
         }
     </script>
 </body>
