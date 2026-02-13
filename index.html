@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مسلك | دليلك في الطواف</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a5f7a;
+            --accent-color: #c9a227;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --bg-color: #f4f7f6;
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .container {
+            width: 90%;
+            max-width: 400px;
+            margin-top: 20px;
+            flex-grow: 1;
+        }
+        .status-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        .salik { background-color: #d4edda; color: var(--success-color); border: 2px solid var(--success-color); }
+        .spiritual-msg {
+            background: linear-gradient(135deg, #1a5f7a, #0d2f3d);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            border-right: 5px solid var(--accent-color);
+        }
+        .main-button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(201, 162, 39, 0.3);
+        }
+        .footer { padding: 20px; font-size: 0.8rem; color: #888; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>مَسْلَك</h1>
+        <p>دليلك الذكي للطواف</p>
+    </div>
+    <div class="container">
+        <div class="spiritual-msg">
+            <strong>تذكير:</strong> أنت في أقدس مكان على وجه الأرض، استغل كل لحظة بالذكر والخلق الحسن، فالحسنة هنا مضاعفة.
+        </div>
+        <div class="status-card">
+            <h3>حالة مسار الطواف الآن</h3>
+            <div id="statusBadge" class="status-badge salik">المسار سـالـك</div>
+            <p id="suggestion" style="margin-top: 15px;">يمكنك البدء بطوافك الآن بكل يسر.</p>
+        </div>
+        <button class="main-button" onclick="startTawaf()">تفعيل تتبع المسار (GPS)</button>
+    </div>
+    <div class="footer">مشروع مسلك &copy; لخدمة ضيوف الرحمن</div>
+    <script>
+        function startTawaf() {
+            alert("سيتم طلب الإذن للوصول للموقع لتوجيهك للمسار السالك...");
+        }
+    </script>
+</body>
+</html>
